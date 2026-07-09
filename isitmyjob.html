@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Is it my job? — the GMS interface flowchart</title>
+<meta name="description" content="A simple guide for GPs deciding whether an ask from secondary care is covered by the GMS contract. Endorsed by Lothian LMC.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f7f6f2;
+    --card: #ffffff;
+    --ink: #1c2a33;
+    --ink-soft: #5a6a74;
+    --rule: #dcd9d0;
+    --accent: #0e6b6b;
+    --accent-soft: #e3efee;
+    --no: #a63d3d;
+    --no-soft: #f7e7e5;
+    --yes: #2e7d4f;
+    --yes-soft: #e6f2ea;
+    --call: #a9761c;
+    --call-soft: #faf1dc;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: 32px 20px 64px; }
+
+  .crumb {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 28px;
+  }
+  .crumb a { color: var(--ink-soft); text-decoration: none; border-bottom: 1px solid var(--rule); }
+  .crumb a:hover, .crumb a:focus-visible { color: var(--accent); border-color: var(--accent); }
+
+  h1 {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-size: clamp(30px, 6vw, 46px);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+  }
+  .standfirst { margin-top: 14px; max-width: 62ch; color: var(--ink-soft); }
+  .standfirst strong { color: var(--ink); font-weight: 600; }
+
+  h2.sectionhead {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 44px 0 16px;
+  }
+
+  /* ================= interactive walkthrough ================= */
+  .quiz {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: clamp(22px, 4vw, 34px);
+    box-shadow: 0 1px 3px rgba(28,42,51,.06), 0 10px 30px rgba(28,42,51,.05);
+  }
+  .trail {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-bottom: 14px;
+    min-height: 18px;
+  }
+  .quiz .question {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+    font-size: clamp(19px, 3.5vw, 24px);
+    line-height: 1.35;
+  }
+  .quiz .clarify {
+    margin-top: 10px;
+    color: var(--ink-soft);
+    font-size: 15px;
+  }
+  .answers { margin-top: 22px; display: grid; gap: 10px; }
+  .answers button {
+    text-align: left;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1.5px solid var(--rule);
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    touch-action: manipulation;
+    line-height: 1.4;
+  }
+  .answers button span { display: block; font-weight: 400; font-family: 'Source Serif 4', serif; font-size: 14px; color: var(--ink-soft); margin-top: 3px; }
+  .answers button:hover { border-color: var(--accent); background: var(--accent-soft); }
+  .answers button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  .verdict { display: none; }
+  .verdict .badge {
+    display: inline-block;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 7px 14px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+  }
+  .verdict.v-no .badge { background: var(--no-soft); color: var(--no); }
+  .verdict.v-yes .badge { background: var(--yes-soft); color: var(--yes); }
+  .verdict.v-agree .badge { background: var(--accent-soft); color: var(--accent); }
+  .verdict.v-call .badge { background: var(--call-soft); color: var(--call); }
+  .verdict h3 {
+    font-family: 'Archivo', sans-serif;
+    font-size: clamp(20px, 4vw, 26px);
+    line-height: 1.25;
+    margin-bottom: 10px;
+  }
+  .verdict p { margin-bottom: 10px; }
+  .verdict a { color: var(--accent); }
+  .again {
+    margin-top: 18px;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--accent);
+    background: none;
+    border: 1.5px solid var(--accent);
+    border-radius: 8px;
+    padding: 10px 18px;
+    cursor: pointer;
+  }
+  .again:hover { background: var(--accent-soft); }
+  .again:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  /* ================= rules ================= */
+  ol.rules { list-style: none; counter-reset: rule; }
+  ol.rules li {
+    counter-increment: rule;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 16px 18px 16px 62px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  ol.rules li::before {
+    content: counter(rule);
+    position: absolute;
+    left: 18px; top: 16px;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  ol.rules li strong { font-family: 'Archivo', sans-serif; font-weight: 600; display: block; margin-bottom: 3px; }
+  ol.rules li span { color: var(--ink-soft); font-size: 15px; }
+
+  /* ================= printable flowchart ================= */
+  .chart-tools { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+  .chart-tools p { font-size: 14px; color: var(--ink-soft); font-style: italic; }
+  button.print {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: #fff;
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    padding: 11px 20px;
+    cursor: pointer;
+  }
+  button.print:hover { background: #0a5757; }
+  button.print:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  .chart {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: clamp(20px, 4vw, 34px);
+  }
+  .node {
+    border: 1.5px solid var(--ink);
+    border-radius: 10px;
+    padding: 14px 16px;
+    max-width: 560px;
+    margin: 0 auto;
+    text-align: center;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 1.4;
+    background: var(--card);
+  }
+  .node small { display: block; font-family: 'Source Serif 4', serif; font-weight: 400; font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
+  .node.start { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .node.start small { color: #cfd6da; }
+
+  .down {
+    width: 2px; height: 26px;
+    background: var(--ink);
+    margin: 0 auto;
+    position: relative;
+  }
+  .down::after {
+    content: "";
+    position: absolute;
+    bottom: -1px; left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: var(--ink);
+  }
+
+  .branch {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 0;
+  }
+  .branch .col { display: flex; flex-direction: column; }
+  .branch-label {
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .1em;
+    padding: 4px 0 2px;
+  }
+  .branch-label.yes { color: var(--yes); }
+  .branch-label.no { color: var(--no); }
+
+  .outcome {
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-align: center;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 1.4;
+  }
+  .outcome small { display: block; font-family: 'Source Serif 4', serif; font-weight: 400; font-size: 13px; margin-top: 4px; }
+  .outcome.no    { background: var(--no-soft);    color: var(--no); border: 1.5px solid var(--no); }
+  .outcome.yes   { background: var(--yes-soft);   color: var(--yes); border: 1.5px solid var(--yes); }
+  .outcome.agree { background: var(--accent-soft); color: var(--accent); border: 1.5px solid var(--accent); }
+  .outcome.call  { background: var(--call-soft);  color: var(--call); border: 1.5px solid var(--call); }
+
+  .chart-foot {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--rule);
+    font-size: 13px;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+
+  @media (max-width: 560px) {
+    .branch { grid-template-columns: 1fr; }
+  }
+
+  /* ================= gms panel ================= */
+  .gms {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 22px 24px;
+    max-width: 70ch;
+  }
+  .gms p { margin-bottom: 12px; }
+  .gms p:last-child { margin-bottom: 0; }
+
+  .notes { margin-top: 36px; font-size: 14px; color: var(--ink-soft); max-width: 68ch; }
+  .notes p { margin-bottom: 10px; }
+  .notes a { color: var(--accent); }
+
+  footer {
+    margin-top: 56px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  footer a { color: var(--ink-soft); }
+
+  /* ================= print: flowchart only ================= */
+  @media print {
+    body { background: #fff; }
+    .crumb, .quiz, .chart-tools, .notes, footer, h2.walkhead, h2.ruleshead, ol.rules, .gms, h2.gmshead, .standfirst, h1.pagetitle { display: none !important; }
+    .wrap { padding: 0; max-width: none; }
+    .chart { border: none; padding: 0; }
+    .chart::before {
+      content: "Is it my job? — the GMS interface flowchart · Lothian LMC";
+      display: block;
+      font-family: 'Archivo', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="crumb"><a href="index.html">tonythepony.co.uk</a> / is it my job?</p>
+
+  <h1 class="pagetitle">Is it my job?</h1>
+  <p class="standfirst">
+    Secondary care has asked the practice to do something. A quick way to work out whether it's
+    covered by your <strong>GMS contract</strong> — answer two or three questions, or use the
+    flowchart. Endorsed by <strong>Lothian LMC</strong>.
+  </p>
+
+  <!-- ============ WALKTHROUGH ============ -->
+  <h2 class="sectionhead walkhead">Walk it through</h2>
+  <div class="quiz" id="quiz">
+    <div class="trail" id="trail"></div>
+    <div id="stage"></div>
+  </div>
+
+  <!-- ============ RULES ============ -->
+  <h2 class="sectionhead ruleshead">The seven rules of the interface</h2>
+  <ol class="rules">
+    <li><strong>Whoever orders a test owns the result.</strong><span>Requesting an investigation means reviewing it, acting on it, and telling the patient. This is a patient safety principle endorsed by the Scottish Government, the BMA and the GMC — not an opening position.</span></li>
+    <li><strong>Whoever proposes a referral makes it.</strong><span>If a hospital clinician decides the patient needs another specialty, they refer. "Ask your GP to refer you" is passing their decision to someone without their findings.</span></li>
+    <li><strong>Whoever starts a treatment prescribes and monitors it.</strong><span>Until the practice has accepted a resourced shared care agreement, prescribing and monitoring stay with the initiating service. A draft or "in principle" agreement counts as no agreement — and a practice can opt out, at which point full care returns to the specialty.</span></li>
+    <li><strong>Whoever does a procedure owns the aftercare.</strong><span>Wound checks, sutures, post-op review — and the fit note covering the episode and recovery. The operating team knows what was done and what recovery should look like.</span></li>
+    <li><strong>Advice is not a transfer.</strong><span>Specialists can and should recommend things for patients you manage. Whether to act is your clinical decision — and if you order the test or start the drug, rules 1 and 3 now apply to you.</span></li>
+    <li><strong>New work moves only with agreement and resource.</strong><span>The GMS contract is not elastic. Work beyond its scope transfers through commissioning — an enhanced service or an accepted agreement — not through a clinic letter.</span></li>
+    <li><strong>Return the task, never the patient.</strong><span>Declining work is not declining care. Say what should happen instead, make sure the patient isn't left in limbo, and use an LMC template letter so the message lands consistently.</span></li>
+  </ol>
+
+  <!-- ============ FLOWCHART ============ -->
+  <h2 class="sectionhead charthead">The flowchart</h2>
+  <div class="chart-tools">
+    <p>Print it, laminate it, stick it by the workflow screen.</p>
+    <button class="print" type="button" onclick="window.print()">Print the flowchart</button>
+  </div>
+
+  <div class="chart" id="chart">
+    <div class="node start">An ask arrives from secondary care<small>a clinic letter, a discharge summary, or a patient sent round</small></div>
+    <div class="down"></div>
+    <div class="node">Did the task arise from <em>their</em> episode of care?<small>their assessment, their treatment, their procedure, their waiting list — e.g. tests they ordered, drugs they started, their fit note, their onward referral</small></div>
+
+    <div class="branch">
+      <div class="col">
+        <div class="branch-label yes">YES — it's their episode</div>
+        <div class="down"></div>
+        <div class="node">Is there an agreed, <em>resourced</em> arrangement the practice has accepted?<small>an accepted shared care agreement, an enhanced service, or a LIG agreement (e.g. SACT bloods). Draft or "in principle" = no.</small></div>
+        <div class="branch">
+          <div class="col">
+            <div class="branch-label yes">YES</div>
+            <div class="down"></div>
+            <div class="outcome agree">Yours — by agreement<small>Do it, within the boundaries of the agreement. Nothing beyond them.</small></div>
+          </div>
+          <div class="col">
+            <div class="branch-label no">NO</div>
+            <div class="down"></div>
+            <div class="outcome no">Not your job<small>Return it with an LMC template letter. The patient's care continues with the specialty.</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="branch-label no">NO — they're advising about a patient you manage</div>
+        <div class="down"></div>
+        <div class="node">Is it generalist care within your competence?<small>the kind of work GMS essential services cover for your registered patients</small></div>
+        <div class="branch">
+          <div class="col">
+            <div class="branch-label yes">YES</div>
+            <div class="down"></div>
+            <div class="outcome call">Your call<small>It's advice, not an instruction. Act if you judge it right — and if you do, the work is yours (rules 1 &amp; 3).</small></div>
+          </div>
+          <div class="col">
+            <div class="branch-label no">NO</div>
+            <div class="down"></div>
+            <div class="outcome no">Not your job<small>Specialist work needs a specialist — or commissioning. Return or escalate.</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-foot">Genuinely unsure, or the ask keeps coming? Contact the LMC office — that's what it's for. · Lothian LMC</div>
+  </div>
+
+  <!-- ============ GMS PANEL ============ -->
+  <h2 class="sectionhead gmshead">What GMS actually covers, in one paragraph</h2>
+  <div class="gms">
+    <p>Your contract requires the practice to provide <strong>essential services</strong> to your registered patients: managing people who are ill or believe themselves to be ill — including chronic disease and terminal illness — with generalist consultation, advice, treatment and referral, delivered in the manner the practice determines. That is broad, but it is <em>generalist care that you initiate for your patients</em>.</p>
+    <p>What it is not: a subcontract to complete other providers' episodes of care. Their tests, their treatments, their procedures, their lists and their paperwork remain theirs, unless a commissioned service or an agreement the practice has actually accepted — with resource attached — says otherwise. The two ideas fit on one line: <strong>GMS makes you your patients' generalist, not the hospital's registrar.</strong></p>
+  </div>
+
+  <div class="notes">
+    <p>This guide reflects Clinical Work Across the Interface (Lothian GP Subcommittee &amp; Lothian Interface Group, January 2024), the NHS (GMS Contracts) (Scotland) Regulations 2018 definition of essential services, and BMA Scotland safe workload guidance. It is guidance, not contract text — judgement and the patient in front of you come first.</p>
+    <p>Companion tools: <a href="letters.html">interface template letters</a> to return the work · <a href="calculator.html">ES quick calculator</a> to price it.</p>
+  </div>
+
+  <footer>
+    <span>&copy; 2026 Lothian LMC · tonythepony.co.uk</span>
+    <span><a href="letters.html">Template letters</a> · <a href="calculator.html">Calculator</a> · <a href="index.html">Home</a></span>
+  </footer>
+</div>
+
+<script>
+const NODES = {
+  q1: {
+    q: "Did the task arise from secondary care's own episode of care?",
+    c: "Their assessment, their treatment, their procedure, their waiting list. Examples: chasing tests they ordered, prescribing a drug they started, a fit note for their admission, an onward referral they've proposed, their post-op wound check.",
+    a: [
+      { t: "Yes — it comes from their episode", s: "The need was created by their care, not my assessment", n: "q2", trail: "Their episode" },
+      { t: "No — they're advising about a patient we manage", s: "A recommendation about someone under our ongoing generalist care", n: "q3", trail: "Advice re: our patient" }
+    ]
+  },
+  q2: {
+    q: "Is there an agreed, resourced arrangement the practice has accepted?",
+    c: "An accepted shared care agreement, an enhanced service, or a Lothian Interface Group agreement (for example SACT / pre-chemotherapy bloods). A draft SCA or an \u201cagreement in principle\u201d with no resource attached counts as no agreement — and if the practice has opted out, full care defaults to the specialty.",
+    a: [
+      { t: "Yes — we've signed up and it's resourced", s: "", n: "v_agree", trail: "Accepted agreement" },
+      { t: "No — nothing agreed, or agreement in principle only", s: "", n: "v_no", trail: "No agreement" }
+    ]
+  },
+  q3: {
+    q: "Is it generalist care within your competence?",
+    c: "The sort of work GMS essential services cover for your registered patients — as opposed to specialist prescribing, specialist monitoring, or work you'd need training or resource you don't have.",
+    a: [
+      { t: "Yes — ordinary generalist work", s: "", n: "v_call", trail: "Generalist work" },
+      { t: "No — this is specialist territory", s: "", n: "v_no2", trail: "Specialist work" }
+    ]
+  },
+  v_no: { badge: "Not your job", cls: "v-no", h: "Return it — with the patient protected.",
+    p: ["This task belongs to the service whose episode of care created it. Without an accepted, resourced agreement, a clinic letter does not transfer clinical responsibility to the practice.",
+        "Return the task, never the patient: make sure your letter says what should happen next, so care continues with the specialty. There's a template for this — choose the matching scenario on the <a href='letters.html'>interface template letters</a> page.",
+        "If the ask keeps recurring, tell the LMC — patterns are how local agreements get fixed."] },
+  v_no2: { badge: "Not your job", cls: "v-no", h: "Specialist work needs a specialist — or commissioning.",
+    p: ["Even as advice, this falls outside generalist care under GMS, or outside your competence — and the GMC expects you to work within it. Taking it on unresourced is a risk to you and the patient.",
+        "Return it to the specialty, or if it's the kind of work that arguably could sit in primary care, that's a commissioning conversation — not a clinic-letter one. The <a href='letters.html'>template letters</a> cover the common versions, and the <a href='calculator.html'>quick calculator</a> will tell you what the work actually costs."] },
+  v_agree: { badge: "Yours — by agreement", cls: "v-agree", h: "Do it — within the boundaries of the agreement.",
+    p: ["The practice has accepted this work and resource follows it, so it's yours to do: for example SACT bloods, the phlebotomy enhanced service, or a shared care agreement the practice has signed up to.",
+        "One caution: requests must stay strictly within the agreement's boundaries. Anything beyond them is a new ask — run it through this flowchart again."] },
+  v_call: { badge: "Your call", cls: "v-call", h: "It's advice, not an instruction.",
+    p: ["Specialists can and should recommend investigations or treatment for patients managed in primary care. Whether to act is your clinical decision as the patient's generalist — recommendations are not orders, and you can reasonably decline, adapt or defer them.",
+        "But choose knowingly: if you order the test, you own the result; if you start the drug, you own the prescribing. Once you act, the work is yours under GMS essential services."] }
+};
+
+const stage = document.getElementById('stage');
+const trailEl = document.getElementById('trail');
+let trail = [];
+
+function show(id) {
+  const n = NODES[id];
+  trailEl.textContent = trail.length ? trail.join('  \u2192  ') : 'Start';
+  if (n.q) {
+    stage.innerHTML = '<div class="question">' + n.q + '</div><div class="clarify">' + n.c + '</div><div class="answers"></div>';
+    const box = stage.querySelector('.answers');
+    n.a.forEach(ans => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.innerHTML = ans.t + (ans.s ? '<span>' + ans.s + '</span>' : '');
+      b.addEventListener('click', () => { trail.push(ans.trail); show(ans.n); });
+      box.appendChild(b);
+    });
+  } else {
+    stage.innerHTML = '<div class="verdict ' + n.cls + '" style="display:block"><span class="badge">' + n.badge + '</span><h3>' + n.h + '</h3>' +
+      n.p.map(t => '<p>' + t + '</p>').join('') +
+      '<button class="again" type="button">Start again</button></div>';
+    stage.querySelector('.again').addEventListener('click', () => { trail = []; show('q1'); });
+  }
+}
+show('q1');
+</script>
+</body>
+</html>
