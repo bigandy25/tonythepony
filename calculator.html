@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LMC Quick Calculator — cost of an ask</title>
+<meta name="description" content="Estimate the break-even cost to a GP practice of an individual task requested by the health board. Based on BMA SGPC 2026/27 pay rates.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f7f6f2;
+    --card: #ffffff;
+    --ink: #1c2a33;
+    --ink-soft: #5a6a74;
+    --rule: #dcd9d0;
+    --accent: #0e6b6b;      /* deep teal — ledger ink */
+    --accent-soft: #e3efee;
+    --total: #0e6b6b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  .wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 20px 64px;
+  }
+
+  /* ---------- header ---------- */
+  .crumb {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 28px;
+  }
+  .crumb a { color: var(--ink-soft); text-decoration: none; border-bottom: 1px solid var(--rule); }
+  .crumb a:hover, .crumb a:focus-visible { color: var(--accent); border-color: var(--accent); }
+
+  h1 {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-size: clamp(30px, 5vw, 44px);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    max-width: 22ch;
+  }
+  .standfirst {
+    margin-top: 14px;
+    max-width: 62ch;
+    color: var(--ink-soft);
+  }
+  .standfirst strong { color: var(--ink); font-weight: 600; }
+
+  /* ---------- layout ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    margin-top: 36px;
+    align-items: start;
+  }
+  @media (max-width: 760px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 26px 24px;
+  }
+
+  .panel h2 {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+  }
+
+  /* ---------- inputs ---------- */
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+  .field label .rate {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-weight: 400;
+  }
+
+  .stepper {
+    display: flex;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .stepper button {
+    width: 46px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 20px;
+    background: var(--paper);
+    border: none;
+    color: var(--ink);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .stepper button:hover { background: var(--accent-soft); color: var(--accent); }
+  .stepper button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .stepper input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    border-left: 1px solid var(--rule);
+    border-right: 1px solid var(--rule);
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 10px 4px;
+    color: var(--ink);
+    background: var(--card);
+  }
+  .stepper input:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  /* hide native spinners */
+  .stepper input::-webkit-outer-spin-button,
+  .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .stepper input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+
+  .money-input { position: relative; }
+  .money-input .sign {
+    position: absolute;
+    left: 14px; top: 50%;
+    transform: translateY(-50%);
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--ink-soft);
+  }
+  .money-input input {
+    width: 100%;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 10px 12px 10px 32px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--card);
+  }
+  .money-input input:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .hint {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 5px;
+    font-style: italic;
+  }
+
+  /* ---------- the remittance ---------- */
+  .remit { position: sticky; top: 20px; }
+  .remit-lines { font-family: 'IBM Plex Mono', monospace; font-size: 14px; }
+  .remit-line {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 7px 0;
+    border-bottom: 1px dashed var(--rule);
+    color: var(--ink-soft);
+  }
+  .remit-line .amt { font-variant-numeric: tabular-nums; color: var(--ink); }
+  .remit-line.zero { opacity: .38; }
+  .remit-line.pct .amt { color: var(--ink-soft); }
+
+  .total-row {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 2px solid var(--ink);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .total-row .label {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+  .total-row .figure {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: clamp(30px, 6vw, 40px);
+    color: var(--total);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .annualise {
+    margin-top: 18px;
+    padding: 14px 16px;
+    background: var(--accent-soft);
+    border-radius: 8px;
+    font-size: 14px;
+  }
+  .annualise .row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 500;
+  }
+  .annualise input {
+    width: 90px;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 15px;
+    text-align: center;
+  }
+  .annualise input:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .annualise .result {
+    margin-top: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- notes ---------- */
+  .notes {
+    margin-top: 36px;
+    max-width: 70ch;
+  }
+  .notes h2 {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+  }
+  .notes p { margin-bottom: 12px; }
+
+  details {
+    margin-top: 20px;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    background: var(--card);
+  }
+  summary {
+    cursor: pointer;
+    padding: 14px 18px;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--accent);
+    list-style-position: inside;
+  }
+  summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 10px; }
+  .rates-table { padding: 0 18px 18px; overflow-x: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+  th {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  td.num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .rates-table p { font-size: 13px; color: var(--ink-soft); margin-top: 12px; }
+
+  footer {
+    margin-top: 56px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  footer a { color: var(--ink-soft); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="crumb"><a href="index.html">tonythepony.co.uk</a> / LMC quick calculator</p>
+
+  <h1>What does that ask actually cost?</h1>
+  <p class="standfirst">
+    A quick estimate of the <strong>break-even cost</strong> to a practice of an individual task
+    requested by the health board — priced in <strong>minutes of staff time</strong>, not appointments.
+    Uses the same pay rates as the BMA (SGPC) enhanced services calculator, 2026/27.
+  </p>
+
+  <div class="grid">
+
+    <!-- ============ INPUTS ============ -->
+    <section class="panel" aria-labelledby="inputs-h">
+      <h2 id="inputs-h">Time &amp; costs for one instance</h2>
+
+      <div class="field">
+        <label for="gp">Minutes of GP time <span class="rate">£102.93/hr</span></label>
+        <div class="stepper">
+          <button type="button" data-step="-5" data-for="gp" aria-label="Reduce GP minutes by 5">&minus;</button>
+          <input id="gp" type="number" inputmode="numeric" min="0" max="600" step="1" value="0">
+          <button type="button" data-step="5" data-for="gp" aria-label="Increase GP minutes by 5">+</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="pn">Minutes of Practice Nurse time <span class="rate">£35.06/hr</span></label>
+        <div class="stepper">
+          <button type="button" data-step="-5" data-for="pn" aria-label="Reduce nurse minutes by 5">&minus;</button>
+          <input id="pn" type="number" inputmode="numeric" min="0" max="600" step="1" value="0">
+          <button type="button" data-step="5" data-for="pn" aria-label="Increase nurse minutes by 5">+</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="hca">Minutes of HCA time <span class="rate">£22.69/hr</span></label>
+        <div class="stepper">
+          <button type="button" data-step="-5" data-for="hca" aria-label="Reduce HCA minutes by 5">&minus;</button>
+          <input id="hca" type="number" inputmode="numeric" min="0" max="600" step="1" value="0">
+          <button type="button" data-step="5" data-for="hca" aria-label="Increase HCA minutes by 5">+</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="admin">Minutes of admin time <span class="rate">£19.11/hr</span></label>
+        <div class="stepper">
+          <button type="button" data-step="-5" data-for="admin" aria-label="Reduce admin minutes by 5">&minus;</button>
+          <input id="admin" type="number" inputmode="numeric" min="0" max="600" step="1" value="0">
+          <button type="button" data-step="5" data-for="admin" aria-label="Increase admin minutes by 5">+</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="consumables">Consumables cost</label>
+        <div class="money-input">
+          <span class="sign" aria-hidden="true">£</span>
+          <input id="consumables" type="number" inputmode="decimal" min="0" step="0.01" value="0">
+        </div>
+        <p class="hint">Don't include free or reimbursable items.</p>
+      </div>
+    </section>
+
+    <!-- ============ RESULT ============ -->
+    <section class="panel remit" aria-labelledby="result-h" aria-live="polite">
+      <h2 id="result-h">Break-even cost</h2>
+
+      <div class="remit-lines">
+        <div class="remit-line" id="line-gp"><span>GP time</span><span class="amt">£0.00</span></div>
+        <div class="remit-line" id="line-pn"><span>Practice Nurse time</span><span class="amt">£0.00</span></div>
+        <div class="remit-line" id="line-hca"><span>HCA time</span><span class="amt">£0.00</span></div>
+        <div class="remit-line" id="line-admin"><span>Admin time</span><span class="amt">£0.00</span></div>
+        <div class="remit-line" id="line-cons"><span>Consumables</span><span class="amt">£0.00</span></div>
+        <div class="remit-line pct" id="line-heat"><span>Heat &amp; light @ 8%</span><span class="amt">£0.00</span></div>
+        <div class="remit-line pct" id="line-risk"><span>Risk premium @ 5%</span><span class="amt">£0.00</span></div>
+      </div>
+
+      <div class="total-row">
+        <span class="label">Per instance</span>
+        <span class="figure" id="total">£0.00</span>
+      </div>
+
+      <div class="annualise">
+        <div class="row">
+          <label for="count">If this happens</label>
+          <input id="count" type="number" inputmode="numeric" min="1" step="1" value="1">
+          <span>times a year:</span>
+        </div>
+        <div class="result" id="annual">£0.00 per year</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ NOTES ============ -->
+  <section class="notes">
+    <h2>Why minutes, not appointments</h2>
+    <p>
+      A "small ask" is rarely small once you count every pair of hands it passes through.
+      Asking a practice to do a blood test before a hospital appointment might mean five minutes
+      of admin time to set a recall and call the patient in, five minutes of HCA time to take the
+      bloods, and five minutes of GP time to review the result, check the notes, and realise it
+      wasn't for them anyway.
+    </p>
+    <p>
+      Nobody wants a transactional system billing for every few minutes — but at system level
+      these small asks add up, and they need to be counted somewhere. This tool helps put a
+      number on the cost of an individual ask, as distinct from a whole service.
+    </p>
+
+    <details>
+      <summary>Pay rates and how they're derived</summary>
+      <div class="rates-table">
+        <table>
+          <thead>
+            <tr><th>Role</th><th>Basis</th><th>Hourly rate used</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>GP</td>
+              <td>Contractor earnings for 8 sessions (£181,779) + 14.9% unreimbursed employer superannuation, over a 40-hour week, + 2.5% overheads allowance</td>
+              <td class="num">£102.93</td>
+            </tr>
+            <tr>
+              <td>Practice Nurse</td>
+              <td>Band 6 WTE (£50,702) + 14.9% superannuation + employer NI, over a 37.5-hour week, + 5% overheads allowance</td>
+              <td class="num">£35.06</td>
+            </tr>
+            <tr>
+              <td>HCA</td>
+              <td>Band 4 top increment (£33,016) + 14.9% superannuation + employer NI, over a 37.5-hour week, + 5% overheads allowance</td>
+              <td class="num">£22.69</td>
+            </tr>
+            <tr>
+              <td>Admin</td>
+              <td>Band 2 top increment (£27,900) + 14.9% superannuation + employer NI, over a 37.5-hour week, + 5% overheads allowance</td>
+              <td class="num">£19.11</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          Rates match the BMA (SGPC) enhanced services calculator for 2026/27. Agenda for Change
+          figures are the top increment on the most recent Scottish payscale; GP earnings are the most
+          recent NHS Digital headcount figure adjusted to WTE and uplifted by DDRB awards.
+          Heat &amp; light (8%) and risk premium (5%) are fixed percentages based on BMA estimates,
+          applied to the staff-time subtotal. Unlike the full BMA calculator this quick version does
+          not factor in DNA rates or faculty membership — it's an illustrative estimate, not a quote.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <footer>
+    <span>&copy; 2026 tonythepony.co.uk</span>
+    <span><a href="index.html">Back to the fire</a></span>
+  </footer>
+</div>
+
+<script>
+  // Hourly rates — BMA SGPC 2026/27, incl. superannuation, NI where applicable, and overheads
+  const RATES = {
+    gp:    102.92580421875,
+    pn:    35.06025276923077,
+    hca:   22.689576,
+    admin: 19.11113076923077
+  };
+  const HEAT = 0.08;   // heat & light, % of staff-time subtotal
+  const RISK = 0.05;   // risk premium, % of staff-time subtotal
+
+  const $ = id => document.getElementById(id);
+  const gbp = n => '£' + n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  function num(id) {
+    const v = parseFloat($(id).value);
+    return isFinite(v) && v > 0 ? v : 0;
+  }
+
+  function setLine(id, amount) {
+    const el = $(id);
+    el.querySelector('.amt').textContent = gbp(amount);
+    el.classList.toggle('zero', amount === 0);
+  }
+
+  function calc() {
+    const lines = {
+      gp:    num('gp')    * RATES.gp    / 60,
+      pn:    num('pn')    * RATES.pn    / 60,
+      hca:   num('hca')   * RATES.hca   / 60,
+      admin: num('admin') * RATES.admin / 60
+    };
+    const staff = lines.gp + lines.pn + lines.hca + lines.admin;
+    const cons  = num('consumables');
+    const heat  = staff * HEAT;
+    const risk  = staff * RISK;
+    const total = staff + cons + heat + risk;
+
+    setLine('line-gp', lines.gp);
+    setLine('line-pn', lines.pn);
+    setLine('line-hca', lines.hca);
+    setLine('line-admin', lines.admin);
+    setLine('line-cons', cons);
+    setLine('line-heat', heat);
+    setLine('line-risk', risk);
+    $('total').textContent = gbp(total);
+
+    const count = Math.max(1, Math.round(num('count')) || 1);
+    $('annual').textContent = gbp(total * count) + ' per year';
+  }
+
+  // steppers
+  document.querySelectorAll('.stepper button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = $(btn.dataset.for);
+      const next = Math.max(0, (parseFloat(input.value) || 0) + parseFloat(btn.dataset.step));
+      input.value = next;
+      calc();
+    });
+  });
+
+  // live inputs
+  ['gp','pn','hca','admin','consumables','count'].forEach(id =>
+    $(id).addEventListener('input', calc)
+  );
+
+  calc();
+</script>
+</body>
+</html>
