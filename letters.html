@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interface Template Letters — Lothian LMC</title>
+<meta name="description" content="Template letters for GP practices declining work inappropriately transferred from secondary care. Endorsed by Lothian LMC.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f7f6f2;
+    --card: #ffffff;
+    --ink: #1c2a33;
+    --ink-soft: #5a6a74;
+    --rule: #dcd9d0;
+    --accent: #0e6b6b;
+    --accent-soft: #e3efee;
+    --mark: #fdf3d7;
+    --mark-edge: #e8cf8a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: 32px 20px 64px; }
+
+  .crumb {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 28px;
+  }
+  .crumb a { color: var(--ink-soft); text-decoration: none; border-bottom: 1px solid var(--rule); }
+  .crumb a:hover, .crumb a:focus-visible { color: var(--accent); border-color: var(--accent); }
+
+  h1 {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 5vw, 42px);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    max-width: 24ch;
+  }
+  .standfirst { margin-top: 14px; max-width: 64ch; color: var(--ink-soft); }
+  .standfirst strong { color: var(--ink); font-weight: 600; }
+
+  /* ---- selectors ---- */
+  .pickers { margin-top: 32px; display: grid; gap: 16px; }
+  .picker label {
+    display: block;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+  .picker select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    background: var(--card);
+    font-family: 'Archivo', sans-serif;
+    font-size: 16px;
+    color: var(--ink);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a6a74' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+  }
+  .picker select:focus-visible { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+  .whentouse {
+    display: none;
+    margin-top: 4px;
+    padding: 14px 16px;
+    background: var(--accent-soft);
+    border-radius: 8px;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--ink);
+  }
+  .whentouse strong { font-style: normal; font-family: 'Archivo', sans-serif; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+
+  /* ---- letter ---- */
+  .letter-area { display: none; margin-top: 28px; }
+
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .toolbar .hinttext {
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+  button.copy {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: .04em;
+    color: #fff;
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    padding: 11px 20px;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  button.copy:hover { background: #0a5757; }
+  button.copy:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  button.copy.done { background: #2e7d4f; }
+
+  .page {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(28,42,51,.06), 0 10px 30px rgba(28,42,51,.05);
+    padding: clamp(24px, 5vw, 48px);
+  }
+  .page p { margin-bottom: 16px; }
+  .page p:last-child { margin-bottom: 0; }
+
+  /* placeholder tokens the GP completes in Word */
+  .ph {
+    background: var(--mark);
+    border-bottom: 1px dashed var(--mark-edge);
+    padding: 0 3px;
+    border-radius: 3px;
+    white-space: normal;
+  }
+
+  /* clickable alternatives */
+  .alt {
+    background: var(--accent-soft);
+    border-bottom: 1px dashed var(--accent);
+    padding: 0 3px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .alt:hover { background: #d2e7e5; }
+  .alt:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  .endorse {
+    font-size: 14px;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+
+  /* choice sheet */
+  .sheet-backdrop {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(28,42,51,.4);
+    z-index: 10;
+  }
+  .sheet {
+    display: none;
+    position: fixed;
+    left: 50%; top: 50%;
+    transform: translate(-50%,-50%);
+    width: min(560px, calc(100vw - 32px));
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(28,42,51,.3);
+    z-index: 11;
+    padding: 22px;
+  }
+  .sheet h2 {
+    font-family: 'Archivo', sans-serif;
+    font-size: 13px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 14px;
+  }
+  .sheet button.option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    line-height: 1.5;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    color: var(--ink);
+  }
+  .sheet button.option:hover { border-color: var(--accent); background: var(--accent-soft); }
+  .sheet button.option:focus-visible { outline: 2px solid var(--accent); }
+
+  .notes {
+    margin-top: 36px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    max-width: 68ch;
+  }
+  .notes p { margin-bottom: 10px; }
+
+  footer {
+    margin-top: 56px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  footer a { color: var(--ink-soft); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="crumb"><a href="index.html">tonythepony.co.uk</a> / interface letters</p>
+
+  <h1>Interface template letters</h1>
+  <p class="standfirst">
+    For GP practices returning work <strong>inappropriately transferred from secondary care</strong>.
+    Choose the issue and the specific request, adjust the highlighted choices, then copy the letter
+    into your own document to add patient details and practice branding.
+    Endorsed by <strong>Lothian LMC</strong>, citing positions agreed with the Lothian Interface Group.
+  </p>
+
+  <div class="pickers">
+    <div class="picker">
+      <label for="cat">1 · The issue</label>
+      <select id="cat"><option value="">Choose an issue…</option></select>
+    </div>
+    <div class="picker">
+      <label for="req">2 · The specific request</label>
+      <select id="req" disabled><option value="">Choose an issue first…</option></select>
+    </div>
+    <div class="whentouse" id="whentouse"></div>
+  </div>
+
+  <div class="letter-area" id="letterArea">
+    <div class="toolbar">
+      <span class="hinttext">Teal phrases are alternatives — tap to choose. Yellow tokens stay as prompts to complete in Word.</span>
+      <button class="copy" id="copyBtn" type="button">Copy letter</button>
+    </div>
+    <div class="page" id="letterPage" aria-live="polite"></div>
+  </div>
+
+  <div class="notes">
+    <p>These templates cite Clinical Work Across the Interface (Lothian GP Subcommittee &amp; Lothian Interface Group, January 2024), LIG's Blood Tests Across the Interface guidance, the Scottish Government and BMA endorsed principle that the clinician who requests an investigation is responsible for acting on the result, GMC Good Medical Practice and BMA Scotland safe workload guidance.</p>
+    <p>They are a starting point, not a substitute for judgement — adapt to the circumstances, and contact the LMC office if you are unsure whether a request is appropriate.</p>
+  </div>
+
+  <footer>
+    <span>&copy; 2026 Lothian LMC · tonythepony.co.uk</span>
+    <span><a href="calculator.html">ES quick calculator</a> · <a href="index.html">Home</a></span>
+  </footer>
+</div>
+
+<div class="sheet-backdrop" id="backdrop"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <h2 id="sheetTitle">Choose the wording</h2>
+  <div id="sheetOptions"></div>
+</div>
+
+<script>
+const ENDORSE = "This letter is based on a template endorsed by Lothian LMC and reflects positions agreed between the Lothian GP Subcommittee and the Lothian Interface Group.";
+
+/* Bracketed text: [a / b / c] = clickable alternatives; [single] = placeholder to complete in Word. */
+const DATA = [
+{ cat: "Prescribing", letters: [
+  { t: "Hospital-initiated medication without an agreed shared care arrangement",
+    w: "The practice is asked to take over prescribing of a medication initiated in secondary care where no shared care agreement has been formally accepted by the practice, where the SCA is a draft or \u201cagreement in principle\u201d only, or where the practice has opted out.",
+    b: [
+"Dear Colleague,",
+"Re: [Patient name, DOB, CHI]",
+"Your letter of [date] asks the practice to take over prescribing of [medication] initiated by your service.",
+"The practice is unable to accept this transfer of prescribing responsibility. Hospitals should only initiate care under a shared care arrangement where the individual practice has accepted clinical responsibility for that patient. In this case [no shared care agreement exists for this medication / the relevant shared care agreement remains a recommendation or agreement in principle which has not been formally accepted by general practice, and no resource has transferred to support the work / the practice has opted out of this shared care agreement, in which case full care defaults to the specialty]. As the prescriber signing each prescription carries full clinical and legal responsibility for it, the practice cannot safely prescribe a treatment it did not initiate and is not resourced to monitor.",
+"Prescribing and any associated monitoring therefore remain with your service. Please ensure the patient continues to receive their medication without interruption and contact us if the position changes, for example if a shared care agreement is formally agreed and resourced.",
+"We raise this constructively. Clear boundaries of responsibility at the interface protect patients as well as clinicians on both sides.",
+"@ENDORSE",
+"Yours faithfully," ] },
+  { t: "Urgent or first prescription following secondary care assessment",
+    w: "A patient has been assessed in secondary care and sent to the practice for an immediate or short-notice prescription for treatment recommended by the assessing clinician.",
+    b: [
+"Dear Colleague,",
+"Re: [Patient name, DOB, CHI]",
+"The patient attended the practice on [date] having been advised by your service to obtain a prescription for [medication] at short notice.",
+"Under the position agreed between the Lothian GP Subcommittee and the Lothian Interface Group (Clinical Work Across the Interface, January 2024), where general practice is better placed to provide an acute prescription, the assessing clinician is responsible for informing the patient that a prescription is being recommended, and patients must be advised of a minimum of three working days before any acute prescription is available. Where a delay of that length would significantly alter the patient's outcome or cause significant harm, the agreed route is hospital pharmacy dispensing, particularly where the patient is already on an acute site \u2014 not a same-day request to the practice.",
+"On this occasion [we have issued the prescription in the patient's interests / we have been unable to issue the prescription at the notice given], but we ask that your team follows the agreed pathway in future: communicate recommendations to the practice clinical mailbox, advise patients of the three working day timescale, and use hospital pharmacy dispensing where treatment is genuinely urgent.",
+"@ENDORSE",
+"Yours faithfully," ] },
+  { t: "Treatment where prescribing and monitoring are agreed specialty responsibilities",
+    w: "The practice is asked to prescribe or monitor a treatment which the January 2024 interface agreement lists as remaining wholly with secondary care (for example biologics, fingolimod, mexiletine, bempedoic acid within three months of initiation, liraglutide within the weight management service, or hyperparathyroidism management).",
+    b: [
+"Dear Colleague,",
+"Re: [Patient name, DOB, CHI]",
+"Your letter of [date] asks the practice to [prescribe / monitor / prescribe and monitor] [treatment].",
+"Under Clinical Work Across the Interface (Lothian GP Subcommittee and Lothian Interface Group, January 2024), both the prescribing and the monitoring of this treatment are agreed to remain the responsibility of the specialty service. This reflects patient safety and clinical competency considerations as well as the absence of any resourced arrangement in general practice.",
+"We are therefore returning this task to your service. Please ensure the patient's treatment and monitoring continue without interruption, and contact the practice only where an action genuinely requiring general practice input is identified.",
+"@ENDORSE",
+"Yours faithfully," ] },
+  { t: "Prescribing or investigations recommended by a private provider",
+    w: "A private provider (including overseas providers) recommends that NHS general practice prescribes, monitors or investigates on its behalf.",
+    b: [
+"Dear Colleague,",
+"Re: [Patient name, DOB, CHI]",
+"We have received your recommendation of [date] that the practice [prescribes / arranges monitoring / arranges investigations] following private assessment or treatment.",
+"Responsibility for prescribing, monitoring and follow-up arising from privately provided care rests with the private provider. NHS general practice is not resourced or contracted to complete episodes of private care, and the prescriber who signs a prescription carries full clinical responsibility for it, which we cannot safely accept for treatment we did not initiate and cannot oversee. This reflects the Scottish Government's stated position on follow-up of private treatment, including surgery undertaken overseas.",
+"Where the patient wishes their ongoing care to transfer to the NHS, the practice will consider a referral into the appropriate NHS pathway, and the patient will be seen and treated according to NHS clinical prioritisation. Until such a transfer is complete, please continue to provide the care associated with your treatment, including prescriptions and monitoring.",
+"@ENDORSE",
+"Yours faithfully," ] }
+]},
+{ cat: "Investigations, monitoring and results", letters: [
+  { t: "Asked to follow up results of investigations ordered by secondary care",
+    w: "A clinic letter or discharge summary asks the practice to chase, review or act on the results of tests requested by the hospital team.",
+    b: [
+"Dear Colleague,",
+"Re: [Patient name, DOB, CHI]",
+"Your [letter / discharge summary] of [date] asks the practice to follow up the results of investigations arranged by your team.",
+"The practice is unable to accept this transfer of clinical responsibility. It is an established principle, endorsed by the Scottish Government and the BMA as a matter of patient safety and reflected in GMC guidance, that the clinician who requests an investigation is responsible for reviewing and acting on the result, and that the duty of care to communicate results to the patient lies with the requesting clinician. The practice does not hold the clinical context in which these tests were ordered, and accepting the task would introduce avoidable risk.",
+"We are therefore returning this task to your service. To avoid delay for the patient, please ensure your team reviews the results and communicates directly with the patient, contacting us only if an action genuinely requiring general practice input is identified.",
+"@ENDORSE",
+"Yours faithfully," ] },
+  { t: "Monitoring or phlebotomy for a patient under ongoing specialty care",
+    w: "The practice is asked to provide bloods, ECGs or other monitoring required for the ongoing management of a patient under specialty care, outwith the agreed exceptions (such as pre-chemotherapy/SACT bloods, the phlebotomy enhanced service, or an accepted shared care agreement).",
+    b: [
+"Dear Colleague,",
+"Re: [Patient name, DOB, CHI]",
+"Your letter of [date] asks the practice to undertake [investigation / monitoring] required for the ongoing management of this patient under your service.",
+"Under Clinical Work Across the Interface (Lothian GP Subcommittee and Lothian Interface Group, January 2024) and the Lothian Interface Group's Blood Tests Across the Interface guidance, phlebotomy and monitoring required by secondary care for patients under specialty management remain the responsibility of secondary care, including tests which before the pandemic were undertaken at face-to-face outpatient appointments. These should take place in monitoring or outpatient clinics unless covered by a specifically agreed arrangement. The January 2024 agreement also lists monitoring which specific specialties have agreed remains wholly with their services.",
+"General practice continues to honour the substantial volume of phlebotomy already agreed \u2014 some 47,000 tests each year \u2014 and this request falls outwith those agreements. We are therefore returning it to your service. Please arrange the [investigation / monitoring] through your clinic and contact the practice only where general practice input is genuinely required.",
+"@ENDORSE",
+"Yours faithfully," ] }
+]},
+{ cat: "Referrals and waiting lists", letters: [
+  { t: "Patient advised to \u201cask their GP\u201d for an onward referral",
+    w: "A hospital clinician has identified the need for a referral to another specialty but has directed the patient to the practice to make it.",
+    b: [
+"Dear Colleague,",
+"Re: [Patient name, DOB, CHI]",
+"We understand from [the patient / your correspondence] that your team has identified the need for a referral to [specialty] but has advised the patient to ask the practice to make it.",
+"The position agreed through the Lothian Interface Group is that any referral proposed by a health professional, in primary or secondary care, should be made by that professional and not passed to colleagues to complete on their behalf. Your team holds the clinical findings and context on which the referral decision was based; the practice does not. A referral made by the assessing clinician is safer, faster for the patient, and avoids duplication of work.",
+"We are therefore returning this task to your service and have advised the patient accordingly. Please make the referral directly, copying the practice for information.",
+"@ENDORSE",
+"Yours faithfully," ] },
+  { t: "Re-referral requested after non-attendance or administrative discharge",
+    w: "A patient has been discharged following a missed appointment or administrative process and the practice is asked to re-refer.",
+    b: [
+"Dear Colleague,",
+"Re: [Patient name, DOB, CHI]",
+"Your letter of [date] advises that the patient has been discharged from your service [following non-attendance / administratively] and asks the practice to re-refer.",
+"The clinical need identified in the original referral has not changed, and re-referral by the practice adds no clinical value: it duplicates work, delays the patient's care, and consumes a general practice appointment to reproduce information your service already holds. Interface guidance is clear that providers should not ask GPs to re-refer patients who have missed appointments; patients should be reinstated by the service, applying its own access policy, unless a new clinical assessment is genuinely required.",
+"We therefore ask that you reinstate the patient on your list on the basis of the original referral. Should the practice become aware of new clinical information, we will of course write to you.",
+"@ENDORSE",
+"Yours faithfully," ] },
+  { t: "Patient directed to the practice to expedite or upgrade a waiting list position",
+    w: "A patient on a hospital waiting list has been advised to see their GP to have their referral upgraded or expedited, in the absence of clinical deterioration.",
+    b: [
+"Dear Colleague,",
+"Re: [Patient name, DOB, CHI]",
+"We understand the patient has been advised to contact the practice to seek an upgrade or expedite of their position on your waiting list.",
+"As agreed with the Lothian Interface Group and set out in Clinical Work Across the Interface (January 2024), patients should not be redirected to general practice to request a regrading of their referral priority unless there has been a deterioration in their symptoms. Waiting list prioritisation is a matter for the service holding the list, based on the clinical information already provided.",
+"Where a patient presents to the practice with genuine clinical deterioration, we will assess them and write to you with that new information, as we would in any case. In the absence of deterioration, we are returning this task to your service, and would ask that patients are not directed to the practice for this purpose. Please ensure your service has arrangements in place for handling patient queries about waiting times directly.",
+"@ENDORSE",
+"Yours faithfully," ] }
+]},
+{ cat: "Certification", letters: [
+  { t: "Fit note requested for a hospital episode or recovery period",
+    w: "A patient seen in the emergency department, outpatients or as an inpatient has been sent to the practice for a fit note covering the episode or expected recovery.",
+    b: [
+"Dear Colleague,",
+"Re: [Patient name, DOB, CHI]",
+"The patient attended the practice on [date] seeking a fit note relating to their [admission / attendance / procedure] under your service on [date].",
+"The agreed position in Lothian (Clinical Work Across the Interface, January 2024) is that for patients seen in the emergency department, in outpatient clinics or as inpatients, fit notes should be issued by the specialty. This assists patients and avoids duplication: your team assessed the patient, undertook the treatment and is best placed to judge the appropriate period of absence, and clinicians should issue fit notes at a suitable point, such as discharge, covering an appropriate period. An appointment in general practice solely to certify an episode of hospital care is an avoidable use of capacity and an avoidable delay for the patient.",
+"[We have issued a note on this occasion in the patient's interests, but ask that your team issues certification directly in future. / We have asked the patient to contact your team, who should issue the note covering the appropriate period.]",
+"@ENDORSE",
+"Yours faithfully," ] }
+]},
+{ cat: "Post-operative and follow-up care", letters: [
+  { t: "Post-operative wound care, suture removal or dressings without a commissioned service",
+    w: "The practice is asked to provide routine post-operative care (wound checks, removal of sutures or clips, dressings) that is not covered by a commissioned service or agreed pathway.",
+    b: [
+"Dear Colleague,",
+"Re: [Patient name, DOB, CHI]",
+"Your [discharge summary / letter] of [date] asks the practice to provide [wound review / removal of sutures or clips / dressings] following [procedure].",
+"Routine post-operative care forms part of the operative episode and remains the responsibility of the operating team unless it is covered by a commissioned service or an agreed local pathway. No such arrangement covers this request, and general practice receives no resource for this work. Accepting it on an ad hoc basis also risks inconsistent aftercare for patients, whose post-operative review should rest with the team that knows the procedure performed and its expected course.",
+"We are therefore returning this task to your service. Please arrange the necessary aftercare through your own team or the appropriate commissioned pathway, and provide the patient with clear instructions and a point of contact before discharge.",
+"@ENDORSE",
+"Yours faithfully," ] }
+]},
+{ cat: "Communication, administration and vaccinations", letters: [
+  { t: "Asked to convey results or explain hospital management to the patient",
+    w: "The practice is asked to communicate the results of hospital investigations, or to explain decisions made by the hospital team, on the service's behalf.",
+    b: [
+"Dear Colleague,",
+"Re: [Patient name, DOB, CHI]",
+"Your letter of [date] asks the practice to [inform the patient of the results of investigations arranged by your team / explain your team's management plan to the patient].",
+"The duty of care to communicate results and decisions to a patient lies with the clinician responsible for them. Your team holds the clinical context: the indication for the tests, the significance of the findings and the reasoning behind the plan. The practice does not, and relaying second-hand information risks miscommunication and patient harm. Interface guidance is clear that providers should communicate the results of investigations directly to patients and should have arrangements in place for handling patient queries.",
+"We are therefore returning this task to your service. Please contact the patient directly, and write to the practice with any action genuinely requiring general practice input.",
+"@ENDORSE",
+"Yours faithfully," ] },
+  { t: "Vaccination requested outwith the routine schedule",
+    w: "Secondary care identifies the need for a vaccination outwith routine schedules (for example pre-treatment or post-splenectomy vaccination) and directs the patient or a request to the practice.",
+    b: [
+"Dear Colleague,",
+"Re: [Patient name, DOB, CHI]",
+"Your letter of [date] asks the practice to arrange [vaccination] for this patient.",
+"Following the Scottish Government's reorganisation of vaccination services, general practice no longer provides vaccinations and does not hold vaccine stock or access to vaccination under the Vaccination Transformation Programme, with only very limited locally agreed exceptions. The position agreed through the Lothian Interface Group is that any vaccination outwith routine schedules should be referred, using the appropriate forms available to all clinicians on RefHelp, by the health professional who assesses the vaccination to be necessary \u2014 not passed to general practice at the point of referral or through outpatient correspondence.",
+"We are therefore returning this task to your service. Please complete the appropriate RefHelp vaccination request so the patient can be called by the vaccination service without further delay.",
+"@ENDORSE",
+"Yours faithfully," ] }
+]}
+];
+
+const $ = id => document.getElementById(id);
+const catSel = $('cat'), reqSel = $('req');
+
+DATA.forEach((c, i) => catSel.add(new Option(c.cat, i)));
+
+catSel.addEventListener('change', () => {
+  reqSel.innerHTML = '';
+  $('whentouse').style.display = 'none';
+  $('letterArea').style.display = 'none';
+  if (catSel.value === '') {
+    reqSel.disabled = true;
+    reqSel.add(new Option('Choose an issue first…', ''));
+    return;
+  }
+  reqSel.disabled = false;
+  reqSel.add(new Option('Choose the request…', ''));
+  DATA[catSel.value].letters.forEach((l, i) => reqSel.add(new Option(l.t, i)));
+  if (DATA[catSel.value].letters.length === 1) { reqSel.value = 0; renderLetter(); }
+});
+
+reqSel.addEventListener('change', renderLetter);
+
+/* Split "[a / b]" alternatives from "[placeholder]" tokens */
+function renderLetter() {
+  if (reqSel.value === '') { $('letterArea').style.display = 'none'; $('whentouse').style.display = 'none'; return; }
+  const letter = DATA[catSel.value].letters[reqSel.value];
+  $('whentouse').innerHTML = '<strong>When to use</strong><br>' + letter.w;
+  $('whentouse').style.display = 'block';
+
+  const page = $('letterPage');
+  page.innerHTML = '';
+  letter.b.forEach(text => {
+    const p = document.createElement('p');
+    if (text === '@ENDORSE') { p.textContent = ENDORSE; p.className = 'endorse'; page.appendChild(p); return; }
+    let rest = text;
+    while (rest.length) {
+      const m = rest.match(/\[([^\[\]]+)\]/);
+      if (!m) { p.appendChild(document.createTextNode(rest)); break; }
+      if (m.index > 0) p.appendChild(document.createTextNode(rest.slice(0, m.index)));
+      const inner = m[1];
+      const span = document.createElement('span');
+      if (inner.includes(' / ')) {
+        span.className = 'alt';
+        span.tabIndex = 0;
+        span.setAttribute('role', 'button');
+        span.setAttribute('aria-label', 'Choose wording');
+        span.dataset.options = inner;
+        span.textContent = inner.split(' / ')[0];
+        const open = () => openSheet(span);
+        span.addEventListener('click', open);
+        span.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+      } else {
+        span.className = 'ph';
+        span.textContent = '[' + inner + ']';
+      }
+      p.appendChild(span);
+      rest = rest.slice(m.index + m[0].length);
+    }
+    page.appendChild(p);
+  });
+
+  $('letterArea').style.display = 'block';
+  const btn = $('copyBtn');
+  btn.textContent = 'Copy letter';
+  btn.classList.remove('done');
+}
+
+/* alternatives sheet */
+let activeSpan = null;
+function openSheet(span) {
+  activeSpan = span;
+  const opts = span.dataset.options.split(' / ');
+  const holder = $('sheetOptions');
+  holder.innerHTML = '';
+  opts.forEach(o => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'option';
+    b.textContent = o;
+    b.addEventListener('click', () => { activeSpan.textContent = o; closeSheet(); });
+    holder.appendChild(b);
+  });
+  $('sheet').style.display = 'block';
+  $('backdrop').style.display = 'block';
+  holder.querySelector('button').focus();
+}
+function closeSheet() {
+  $('sheet').style.display = 'none';
+  $('backdrop').style.display = 'none';
+  if (activeSpan) activeSpan.focus();
+}
+$('backdrop').addEventListener('click', closeSheet);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+
+/* copy as plain text for Word */
+$('copyBtn').addEventListener('click', async () => {
+  const paras = [...$('letterPage').querySelectorAll('p')].map(p => p.textContent);
+  const text = paras.join('\n\n');
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy'); ta.remove();
+  }
+  const btn = $('copyBtn');
+  btn.textContent = 'Copied \u2713';
+  btn.classList.add('done');
+  setTimeout(() => { btn.textContent = 'Copy letter'; btn.classList.remove('done'); }, 2500);
+});
+</script>
+</body>
+</html>
